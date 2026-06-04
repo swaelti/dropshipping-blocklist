@@ -1,0 +1,29 @@
+services:
+  dropshipping-scraper:
+    build: .
+    # Oder wenn Image schon gebaut: image: dropshipping-scraper:latest
+    container_name: dropshipping-scraper
+    restart: unless-stopped
+
+    environment:
+      # GitHub Personal Access Token (Fine-grained, Contents: Read+Write)
+      # In Portainer: Stack → Environment variables eintragen (nicht hier hardcoden)
+      GITHUB_TOKEN: ${GITHUB_TOKEN}
+      GITHUB_USER: ${GITHUB_USER}
+      GITHUB_REPO: ${GITHUB_REPO}
+      # Optionaler manueller Trigger (siehe unten)
+      TZ: Europe/Zurich
+
+    # Logs persistent speichern
+    volumes:
+      - scraper-logs:/var/log
+
+    # Ressourcen begrenzen (Scraper braucht fast nichts)
+    deploy:
+      resources:
+        limits:
+          memory: 128m
+          cpus: "0.25"
+
+volumes:
+  scraper-logs:

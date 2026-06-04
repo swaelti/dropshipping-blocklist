@@ -1,0 +1,551 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Dropshipping-Prüfer – Konsumentenschutz</title>
+<meta name="description" content="Prüfe Online-Shops auf bekannte Dropshipping-Probleme. Basierend auf der verifizierten Liste des Schweizerischen Konsumentenschutzes.">
+<style>
+  :root {
+    --red: #dc2626; --red-bg: #fef2f2; --red-border: #fecaca;
+    --amber: #d97706; --amber-bg: #fffbeb; --amber-border: #fde68a;
+    --green: #16a34a; --green-bg: #f0fdf4; --green-border: #bbf7d0;
+    --gray: #6b7280; --gray-bg: #f9fafb; --gray-border: #e5e7eb;
+    --text: #111827; --muted: #6b7280; --border: #e5e7eb;
+    --bg: #ffffff; --surface: #f9fafb;
+    --radius: 12px; --radius-sm: 8px;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+    background: var(--surface);
+    color: var(--text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+  header {
+    background: var(--bg);
+    border-bottom: 1px solid var(--border);
+    padding: 1rem 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+  }
+  .logo { font-size: 1.5rem; }
+  .header-text h1 { font-size: 1rem; font-weight: 600; }
+  .header-text p { font-size: 0.75rem; color: var(--muted); }
+  .header-text a { color: inherit; }
+
+  main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem 1rem;
+    gap: 1.5rem;
+  }
+
+  .card {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.5rem;
+    width: 100%;
+    max-width: 520px;
+  }
+
+  /* Eingabe */
+  .input-section h2 {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin-bottom: 0.375rem;
+  }
+  .input-section p {
+    font-size: 0.875rem;
+    color: var(--muted);
+    margin-bottom: 1.25rem;
+    line-height: 1.5;
+  }
+  .input-row {
+    display: flex;
+    gap: 0.5rem;
+  }
+  input[type="text"] {
+    flex: 1;
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1rem;
+    font-size: 0.9rem;
+    outline: none;
+    transition: border-color 0.15s;
+    font-family: inherit;
+  }
+  input[type="text"]:focus { border-color: #9ca3af; }
+  button.check-btn {
+    background: var(--text);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    padding: 0.75rem 1.25rem;
+    font-size: 0.9rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: opacity 0.15s;
+    font-family: inherit;
+  }
+  button.check-btn:hover { opacity: 0.85; }
+  button.check-btn:disabled { opacity: 0.35; cursor: not-allowed; }
+
+  /* Ergebnis */
+  .result { display: none; width: 100%; max-width: 520px; }
+  .result.visible { display: block; }
+
+  .result-header {
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+    border: 1.5px solid;
+  }
+  .result-header.danger { background: var(--red-bg); border-color: var(--red-border); }
+  .result-header.warning { background: var(--amber-bg); border-color: var(--amber-border); }
+  .result-header.ok { background: var(--green-bg); border-color: var(--green-border); }
+  .result-header.neutral { background: var(--gray-bg); border-color: var(--gray-border); }
+
+  .result-title {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.1rem;
+    font-weight: 700;
+    margin-bottom: 0.375rem;
+  }
+  .result-title.danger { color: var(--red); }
+  .result-title.warning { color: var(--amber); }
+  .result-title.ok { color: var(--green); }
+  .result-title.neutral { color: var(--gray); }
+
+  .result-domain {
+    font-family: monospace;
+    font-size: 0.8rem;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+  .result-text {
+    font-size: 0.9rem;
+    line-height: 1.6;
+    color: var(--text);
+  }
+
+  .tag-known {
+    display: inline-block;
+    font-size: 0.7rem;
+    padding: 2px 8px;
+    border-radius: 100px;
+    margin-top: 0.5rem;
+    font-weight: 600;
+    background: var(--red-border);
+    color: var(--red);
+  }
+
+  .details {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 1.25rem 1.5rem;
+    margin-bottom: 1rem;
+  }
+  .details h3 {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--muted);
+    margin-bottom: 0.75rem;
+  }
+  .details ul { list-style: none; }
+  .details li {
+    font-size: 0.875rem;
+    line-height: 1.5;
+    padding: 0.25rem 0;
+    display: flex;
+    gap: 0.5rem;
+  }
+  .details li::before { content: attr(data-icon); flex-shrink: 0; }
+
+  .actions { display: flex; gap: 0.625rem; }
+  .btn-secondary {
+    flex: 1;
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--text);
+    text-align: center;
+    text-decoration: none;
+    transition: background 0.15s;
+    font-family: inherit;
+  }
+  .btn-secondary:hover { background: var(--surface); }
+
+  .disclaimer {
+    font-size: 0.75rem;
+    color: var(--muted);
+    text-align: center;
+    max-width: 520px;
+    line-height: 1.5;
+  }
+  .disclaimer a { color: var(--muted); }
+
+  /* Features */
+  .features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
+    width: 100%;
+    max-width: 520px;
+  }
+  .feature {
+    background: var(--bg);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 0.875rem;
+    text-align: center;
+  }
+  .feature-icon { font-size: 1.25rem; margin-bottom: 0.25rem; }
+  .feature-label { font-size: 0.75rem; font-weight: 600; color: var(--text); }
+  .feature-sub { font-size: 0.7rem; color: var(--muted); margin-top: 0.125rem; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    background: var(--bg);
+    padding: 0.875rem 1.5rem;
+    text-align: center;
+    font-size: 0.75rem;
+    color: var(--muted);
+  }
+  footer a { color: var(--muted); }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">🛡️</div>
+  <div class="header-text">
+    <h1>Dropshipping-Prüfer</h1>
+    <p>Daten: <a href="https://www.konsumentenschutz.ch" target="_blank">Stiftung für Konsumentenschutz</a></p>
+  </div>
+</header>
+
+<main>
+  <div class="card input-section" id="inputCard">
+    <h2>Shop überprüfen</h2>
+    <p>Gib die Website-Adresse eines Online-Shops ein und wir prüfen, ob er auf der Warnliste steht.</p>
+    <div class="input-row">
+      <input type="text" id="urlInput" placeholder="z.B. alpiner-stil.com" autocomplete="off" autocapitalize="none" spellcheck="false">
+      <button class="check-btn" id="checkBtn" onclick="checkDomain()">Prüfen</button>
+    </div>
+  </div>
+
+  <div class="result" id="result">
+    <div class="result-header" id="resultHeader">
+      <div class="result-title" id="resultTitle"></div>
+      <div class="result-domain" id="resultDomain"></div>
+      <div class="result-text" id="resultText"></div>
+      <div id="knownTag"></div>
+    </div>
+
+    <div class="details" id="detailsBox" style="display:none">
+      <h3 id="detailsTitle">Hinweise</h3>
+      <ul id="detailsList"></ul>
+    </div>
+
+    <div class="actions">
+      <button class="btn-secondary" onclick="reset()">Weiteren Shop prüfen</button>
+      <a class="btn-secondary" href="https://findmind.ch/c/dropshipping-" target="_blank">Shop melden →</a>
+    </div>
+  </div>
+
+  <div class="features" id="features">
+    <div class="feature">
+      <div class="feature-icon">📋</div>
+      <div class="feature-label">Offizielle Liste</div>
+      <div class="feature-sub">500+ geprüfte Shops</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">⚡</div>
+      <div class="feature-label">Sofortige Prüfung</div>
+      <div class="feature-sub">Kein Laden</div>
+    </div>
+    <div class="feature">
+      <div class="feature-icon">🔒</div>
+      <div class="feature-label">Anonym</div>
+      <div class="feature-sub">Kein Tracking</div>
+    </div>
+  </div>
+
+  <p class="disclaimer" id="disclaimer">
+    Prüft bekannte Shops anhand der verifizierten Liste des Konsumentenschutzes.<br>
+    Nicht gelistete Shops können trotzdem problematisch sein.
+    <br><a href="https://www.konsumentenschutz.ch/online-ratgeber/dropshipping-die-stolpersteine-beim-onlinehandel-mit-billigware-aus-china/" target="_blank">Mehr Infos zum Thema Dropshipping →</a>
+  </p>
+</main>
+
+<footer>
+  Daten: <a href="https://www.konsumentenschutz.ch" target="_blank">Stiftung für Konsumentenschutz</a> · Keine Gewähr für Vollständigkeit · <a href="https://github.com/swaelti/dropshipping-blocklist" target="_blank">GitHub</a>
+</footer>
+
+<script>
+// ── Bekannte Domains (konsumentenschutz.ch, Stand Feb 2026) ─────────────────
+const KNOWN = new Set([
+  "adamandrose-clo.com","adams-fashion.com","adhs.store","adonti.com",
+  "adrina-zurich.ch","adventure-shop.at","adventures-world.com","aeroback.ch",
+  "agogpets.ch","akkupc.ch","akkusnotebook.com","aktiveexerse.ch","aktivgesund.ch",
+  "aktuelle-rezensionen.com","albrechtmode.de","alectra.ch","alex-mode.de",
+  "all-storeschweiz.ch","allegracrystaljewellery.com","allesfuerkueche.de",
+  "alltego.ch","allyourneeds.ch","almas-butik.dk","almora.ch","alp-shop.ch",
+  "alpen-luxe.ch","alpen-modehaus.ch","alpen-modehaus.com","alpenfit.ch",
+  "alpenfluss.ch","alpengesund.ch","alpenia.ch","alpenkrone.ch","alpenmarket.ch",
+  "alpensattel.de","alpexswiss.com","alphara.ch","alpine-elegance.ch",
+  "alpine-eleganz.com","alpineattire.ch","alpinelegance.com","alpiner-stil.com",
+  "alpinesure.ch","alpyn.ch","alremazurich.com","altermann-modehaus.com",
+  "alurea.ch","alzenaswiss.com","amawa.ch","amelia-zurich.ch","ameliquezrh.com",
+  "amnio.ch","amodefashion.com","amora-bern.ch","amora-mode.com","amoremoda.ch",
+  "andersenbutik.dk","andersentrondheim.com","aninu.de","aniwild.ch",
+  "anna-modehaus.ch","anna-modehaus.com","annaszurich.com","apexvistade.com",
+  "aquil.ch","ardena.ch","ardeni.ch","areliagems.com","arielle-geneve.com",
+  "arosaversand.ch","arrani.ch","arsect.com","aspenclothes.com","aspiria.ch",
+  "astridpedersen.com","atelierluzern.com","atelier-vanea.ch","atluminara.com",
+  "aurashop.ch","aureliezurich.ch","aureliusmode.ch","aurenzurich.ch",
+  "aurivo.de","autogear.ch","autoprinz.ch","autumnofferoasis.com","avelena.de",
+  "avencea.com","avenueswiss.ch","avery-zurich.ch","avuso.de","aymozino.ch",
+  "ayvista.ch","azari.ch","azoo.ch","azzlee.fr","babyboss.ch","babyjeta.ch",
+  "babylogik.ch","babyparadies-schweiz.ch","baeverly.ch","baey.ch","bafinstore.ch",
+  "balany.ch","balex-zurich.com","balus.ch","barbayl.ch","barefooted.de",
+  "barekick.com","barfuss-step.ch","barfusschweiz.ch","basel-belle.com",
+  "basel-shoes.com","baselstil.ch","baseltrend.com","bastoz.ch","bauluvio.ch",
+  "bauluvio.com","baumann-modehaus.com","baumannbern.com","baumannzurich.ch",
+  "baumgartner-ortho.ch","bazeus.ch","beamerwelt.ch","beautiva.ch",
+  "beautything.ch","becker-boutique.com","becker-modehaus.de","beckmannberlin.de",
+  "belavie.ch","bellabasel.ch","bellachicha.com","bellajolie.ch",
+  "bellebclothing.ch","bellebern.ch","bellesofie.de","belleva.de","bellevo.ch",
+  "bellezas.ch","bellias.ch","belloova.com","belluna.ch","belmari.ch",
+  "belvital.ch","bemolino.ch","bennett-sydney.com","bennettandbloom.ch",
+  "bequemeschuhe.info","berg-mode.de","berge-bern.com","berger-luzern.ch",
+  "bergerzurich.com","bergkraftshop.ch","bergmode.ch","bergschatz.de",
+  "bergwalt-mode.com","bergxperten.de","berlinboutiqueshop-de.com",
+  "berlinfashionstore.com","bernlive.com","bernsoutlet.com","bernstil.ch",
+  "beste-mode.ch","bestsellr.ch","betterbreathe.ch","bh-welt.ch","bigrey.ch",
+  "bikeheroes.at","bingen.ch","binoyo.com","black-ueli.ch","blazevideo.ch",
+  "blinix.ch","blinkhub.ch","blissberlin.de","blizzari.ch","blues-zurich.com",
+  "blumiya.ch","blurey.ch","bohmezurich.com","bon-chance.ch","bonidashop.ch",
+  "bonidashop.com","bosco-ch.com","boutique-bern.ch","boutique-maximon.ch",
+  "boutiqueamrhyy.ch","boutiqueschweiz.ch","boutiquevivante.com",
+  "boxhero-deutschland.com","boxhero.co","brillanta.ch","bronoir.de",
+  "brunnerluzern.com","brunnerzurich.com","bruu.ch","bubbelwelt.ch",
+  "bucher-zurich.ch","buchermode.ch","budbella.ch","buddypaw.ch","buenome.com",
+  "bunj.ch","burelia.com","buynblue.com","bybalita.de","bycheri.de",
+  "bygeneva.de","bygeneva.ch","bymayberry.com","calestria.de","calmeo.ch",
+  "calmpulse.ch","camila-geneve.com","campwild.ch","canodostreetwear.com",
+  "cardrip.de","cartio.ch","cartsy.ch","casenora.com","casey-london.com",
+  "catherine-ellington.com","cattitude.ch","catzcat.ch","catzyfied.ch",
+  "cavallozurich.com","caveria.se","celana-berlin.de","celana.de",
+  "celestino-firenze.it","ceozurich.store","charlottealexanderzurich.com",
+  "charvere.com","ch.gesundpur.at","ch.grillpar.com","ch.minopia.com",
+  "che.grandado.com","check-it-out.ch","chefbrett.ch","chicley.de",
+  "chiclyberlin.de","chiclyzurich.ch","chicquemoda.com","claracoboutique.ch",
+  "clark-fashion.com","claudia-atelier.de","claudiamonikazurich.com",
+  "claudiasschmuck.ch","cleora-mode.com","clerasse.ch","clickthrills.ch",
+  "clixir.ch","clodaa.ch","cogal.ch","coleter.ro","coleter.se","collenzo.ch",
+  "comfortly.ch","comfy-family.co","comfyfamily.co","comfyknirpse.ch",
+  "convido.ch","coolbe.ch","coolect.ch","coozy.ch","copona.ch","coreex.ch",
+  "cosmos-bracelets.co","couturelondon.uk","cozeymaison.com","cozo.ch",
+  "cozyandcasa.com","cozysteps.ch","cozytime.ch","cozyva.ch","cramer.ch",
+  "createhome.ch","crossy.ch","crystalli-schwiiz.com","cuddle-cloud.com",
+  "curemedici.com","czarinajewellery.com","daily-finds.ch","dailyhome.ch",
+  "dailymode.co.uk","dailythings.ch","dalindo.ch","dalson.ch","dambo.ch",
+  "das-essentials.ch","das-montessori-spielzeug.de","daseine.ch",
+  "dashausderjuwelenschweiz.com","dashdeal.ch","dashstore.ch","daskofferhaus.de",
+  "davincidaslabel.ch","davincidaslabel.de","daxda.ch","de.doogee.com",
+  "deallora.ch","debruin-mode.nl","decarba.ch","decorall.ch","decorbycharm.shop",
+  "deedlite.de","deineautomatten.com","dein-modehaus.de","dein-pfotenfreund.com",
+  "dein-tierbedarf.ch","deinadvent.ch","dekoundwohn.com","delopi.ch","deluxo.ch",
+  "denmark-fashion.com","denuova.com","derila.ch","derilaergo.ch",
+  "dermalux-swiss.ch","deskease.ch","devako.ch","dexus.ch","dharokfashion.com",
+  "diardimats.com","dijara.ch","directnine.ch","divenza.ch","diverla.ch",
+  "dogadore.ch","dogbow.de","donistas.com","doogee.com","douglasbrisbane.com",
+  "drappo.ch","drcomfy.ch","dream-luxe.ch","dreamingstitch.com","dreamydeko.ch",
+  "dressnoble.ch","dressydeals.com","drucklos.ch","dryhumi-ch.com",
+  "duboismode.fr","dulopi.com","dy-rev.com","dydoo.ch","dylan-duesseldorf.de",
+  "easymart.ch","eclea-shop.ch","eco-tuch.ch","ecovac.ch","edge-london.com",
+  "editron.ch","edora.ch","eifachgseit.ch","eiseamodehaus.ch","eisring.ch",
+  "elegantum.ch","eleganz-haus.de","elenastil.com","elevenforest.com",
+  "elitesportique.ch","ella-brown.co.uk","ella-brownuk.com","elle-zurich.com",
+  "ellensstore.ch","elleven.ch","ellies-favorites.ch","elowa.ch","elphono.ch",
+  "pfotenland.ch","swisstailored.ch","elitesportique.ch","autoprinz.ch"
+]);
+
+// ── Muster-Prüfung für unbekannte Domains ───────────────────────────────────
+const TRUSTED = new Set([
+  "digitec.ch","galaxus.ch","migros.ch","coop.ch","manor.ch","interdiscount.ch",
+  "brack.ch","mediamarkt.ch","fnac.ch","zara.com","about-you.ch","zalando.ch",
+  "h-m.com","uniqlo.com","amazon.de","amazon.com","ebay.ch","ricardo.ch",
+  "tutti.ch","anibis.ch","post.ch","sbb.ch","admin.ch",
+]);
+
+const CITY_WORDS = ["zurich","zuerich","bern","basel","geneve","geneva","luzern",
+  "lausanne","zurich","lugano","winterthur","biel","thun","koeln","berlin",
+  "hamburg","muenchen","munich","wien","vienna","paris","london","stockholm"];
+
+const SUSPICIOUS_WORDS = ["boutique","elegance","eleganz","mode","modehaus",
+  "fashion","luxe","luxus","style","stil","atelier","collection","shop",
+  "outlet","store","deals","trend","chic","belle","bella","schatz","traum"];
+
+function analyzePattern(domain) {
+  const d = domain.toLowerCase();
+  const hasCityWord = CITY_WORDS.some(c => d.includes(c));
+  const hasSuspWord = SUSPICIOUS_WORDS.some(w => d.includes(w));
+  const isCH = d.endsWith(".ch");
+  const isDotCom = d.endsWith(".com");
+  const isDotDe = d.endsWith(".de");
+
+  const signals = [];
+  if (hasCityWord && !isCH) signals.push("Schweizer Stadtname in .com/.de-Domain — typisches Muster");
+  if (hasCityWord && hasSuspWord) signals.push("Kombination aus Stadtname und Modewort ist ein bekanntes Dropshipping-Muster");
+  if (hasSuspWord && isDotCom) signals.push("Generische Modewörter kombiniert mit .com-Domain ohne klaren Herkunftsbezug");
+  if (d.match(/\d{4,}/) ) signals.push("Viele Ziffern in der Domain — ungewöhnlich für seriöse Händler");
+  if (d.split("-").length > 3) signals.push("Sehr viele Bindestriche in der Domain — häufig bei Dropshipping-Shops");
+
+  let verdict = "unauffällig";
+  if (signals.length >= 2) verdict = "verdächtig";
+  else if (signals.length === 1) verdict = "hinweis";
+
+  return { signals, verdict };
+}
+
+// ── Domain extrahieren ───────────────────────────────────────────────────────
+function extractDomain(input) {
+  let s = input.trim().toLowerCase();
+  s = s.replace(/^https?:\/\//i, "").replace(/^www\./i, "");
+  s = s.split("/")[0].split("?")[0].split("#")[0];
+  return s;
+}
+
+// ── UI ────────────────────────────────────────────────────────────────────────
+function checkDomain() {
+  const input = document.getElementById("urlInput").value;
+  const domain = extractDomain(input);
+  if (!domain || !domain.includes(".")) return;
+
+  const isKnown = KNOWN.has(domain);
+  const isTrusted = TRUSTED.has(domain);
+  const pattern = analyzePattern(domain);
+
+  let type, icon, title, text, details = [], detailsTitle = "Hinweise";
+
+  if (isKnown) {
+    type = "danger";
+    icon = "⛔";
+    title = "Auf Warnliste";
+    text = "Dieser Shop ist in der verifizierten Liste des Schweizerischen Konsumentenschutzes als problematischer Dropshipping-Shop geführt. Wir raten dringend vom Kauf ab.";
+    detailsTitle = "Typische Probleme bei gelisteten Shops";
+    details = [
+      { icon: "⚠️", text: "Irreführende Produktangaben oder gefälschte Bewertungen" },
+      { icon: "⚠️", text: "Ware wird direkt aus China versendet, oft mindere Qualität" },
+      { icon: "⚠️", text: "Rücksendungen kaum möglich oder sehr kostspielig" },
+      { icon: "⚠️", text: "Kein vollständiges Impressum oder Support schwer erreichbar" },
+    ];
+  } else if (isTrusted) {
+    type = "ok";
+    icon = "✅";
+    title = "Bekannter seriöser Händler";
+    text = "Dieser Shop ist ein etablierter, bekannter Händler und steht nicht auf der Dropshipping-Warnliste.";
+    detailsTitle = "Allgemeine Kauftipps";
+    details = [
+      { icon: "💡", text: "Prüfe Rückgaberecht und Garantiebedingungen vor dem Kauf" },
+      { icon: "💡", text: "Vergleiche Preise auf mehreren Plattformen" },
+    ];
+  } else if (pattern.verdict === "verdächtig") {
+    type = "warning";
+    icon = "⚠️";
+    title = "Auffällig — prüfe genauer";
+    text = "Dieser Shop steht nicht auf der bekannten Warnliste, zeigt aber Muster die bei Dropshipping-Shops häufig vorkommen.";
+    detailsTitle = "Erkannte Muster";
+    details = pattern.signals.map(s => ({ icon: "🔍", text: s }));
+    details.push({ icon: "💡", text: "Suche nach Impressum mit vollständiger Adresse" });
+    details.push({ icon: "💡", text: "Prüfe Bewertungen auf Trustpilot oder Google" });
+  } else if (pattern.verdict === "hinweis") {
+    type = "warning";
+    icon = "🔍";
+    title = "Ein Hinweis gefunden";
+    text = "Dieser Shop steht nicht auf der Warnliste. Es gibt einen leichten Hinweis — prüfe den Shop vor dem Kauf kurz manuell.";
+    detailsTitle = "Hinweis";
+    details = pattern.signals.map(s => ({ icon: "🔍", text: s }));
+    details.push({ icon: "💡", text: "Prüfe ob ein vollständiges Impressum vorhanden ist" });
+  } else {
+    type = "neutral";
+    icon = "❓";
+    title = "Nicht auf der Warnliste";
+    text = "Dieser Shop ist in unserer Datenbank nicht als problematisch bekannt. Das bedeutet nicht automatisch, dass er seriös ist — prüfe immer Impressum und Bewertungen.";
+    detailsTitle = "Tipps vor dem Kauf";
+    details = [
+      { icon: "💡", text: "Gibt es ein vollständiges Impressum mit Adresse?" },
+      { icon: "💡", text: "Wie sind die Bewertungen auf Trustpilot oder Google?" },
+      { icon: "💡", text: "Sind die Preise viel tiefer als bei anderen Anbietern?" },
+      { icon: "💡", text: "Wo kommt die Ware her? Wird die Lieferzeit angegeben?" },
+    ];
+  }
+
+  // DOM aktualisieren
+  const header = document.getElementById("resultHeader");
+  header.className = `result-header ${type}`;
+  const titleEl = document.getElementById("resultTitle");
+  titleEl.className = `result-title ${type}`;
+  titleEl.textContent = `${icon} ${title}`;
+  document.getElementById("resultDomain").textContent = domain;
+  document.getElementById("resultText").textContent = text;
+
+  const knownTag = document.getElementById("knownTag");
+  knownTag.innerHTML = isKnown
+    ? '<span class="tag-known">Auf offizieller Konsumentenschutz-Liste ✓</span>'
+    : "";
+
+  if (details.length > 0) {
+    const box = document.getElementById("detailsBox");
+    box.style.display = "block";
+    document.getElementById("detailsTitle").textContent = detailsTitle;
+    const list = document.getElementById("detailsList");
+    list.innerHTML = details
+      .map(d => `<li data-icon="${d.icon}">${d.text}</li>`)
+      .join("");
+  } else {
+    document.getElementById("detailsBox").style.display = "none";
+  }
+
+  document.getElementById("inputCard").style.display = "none";
+  document.getElementById("features").style.display = "none";
+  document.getElementById("disclaimer").style.display = "none";
+  document.getElementById("result").classList.add("visible");
+}
+
+function reset() {
+  document.getElementById("result").classList.remove("visible");
+  document.getElementById("inputCard").style.display = "block";
+  document.getElementById("features").style.display = "grid";
+  document.getElementById("disclaimer").style.display = "block";
+  document.getElementById("detailsBox").style.display = "none";
+  document.getElementById("urlInput").value = "";
+  document.getElementById("urlInput").focus();
+}
+
+document.getElementById("urlInput").addEventListener("keydown", function(e) {
+  if (e.key === "Enter") checkDomain();
+});
+</script>
+</body>
+</html>

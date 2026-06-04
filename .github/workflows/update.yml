@@ -1,0 +1,62 @@
+name: Blockliste aktualisieren
+
+# WICHTIG: GitHub Actions läuft auf Datacenter-IPs die von konsumentenschutz.ch
+# blockiert werden (403). Zwei Optionen:
+#
+# Option A (empfohlen): Self-Hosted Runner auf eigenem VPS
+#   → runs-on: [self-hosted] (bereits gesetzt)
+#   → Setup: https://docs.github.com/en/actions/hosting-your-own-runners
+#
+# Option B: deploy_vps.sh als Cronjob direkt auf VPS (ohne GitHub Actions)
+#   → Siehe deploy_vps.sh
+
+on:
+  schedule:
+    - cron: "0 6 * * 1"  # Jeden Montag 06:00 UTC
+  workflow_dispatch:       # Manuell auslösbar
+
+permissions:
+  contents: write
+
+jobs:
+  update-blocklist:
+    # Self-Hosted Runner auf eigenem VPS (kein Datacenter-IP-Problem)
+    runs-on: [self-hosted]
+    # Fallback auf GitHub Runner (nur wenn die Seite keine Datacenter-IPs mehr blockiert):
+    # runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Repository auschecken
+        uses: actions/checkout@v4
+
+      - name: Abhängigkeiten installieren
+        run: pip3 install --quiet --break-system-packages requests beautifulsoup4
+
+      - name: Scraper ausführen
+        run: python3 scraper.py
+
+      - name: Änderungen prüfen
+        id: changes
+        run: |
+          if git diff --quiet blocklist.txt domains.txt 2>/dev/null || \
+             git status --short | grep -q "blocklist.txt\|domains.txt"; then
+            echo "changed=true" >> $GITHUB_OUTPUT
+            ENTRIES=$(grep -c "^\|\|" blocklist.txt || echo "0")
+            echo "entries=$ENTRIES" >> $GITHUB_OUTPUT
+          else
+            echo "changed=false" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Commit und Push
+        if: steps.changes.outputs.changed == 'true'
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add blocklist.txt domains.txt
+          git commit -m "chore: Blockliste aktualisiert (${{ steps.changes.outputs.entries }} Einträge)"
+          git push
+
+      - name: Keine Änderungen
+        if: steps.changes.outputs.changed != 'true'
+        run: echo "Keine Änderungen — Quelle unverändert."
